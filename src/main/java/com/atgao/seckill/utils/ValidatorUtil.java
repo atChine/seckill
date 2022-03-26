@@ -1,4 +1,4 @@
-package com.atgao.seckill.vo;
+package com.atgao.seckill.utils;
 
 import org.thymeleaf.util.StringUtils;
 

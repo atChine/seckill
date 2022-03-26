@@ -1,6 +1,10 @@
 package com.atgao.seckill.vo;
 
+import com.atgao.seckill.annotation.IsMobile;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author ：atGaoJu
@@ -10,6 +14,10 @@ import lombok.Data;
  */
 @Data
 public class LoginVo {
+    @NotNull
+    @IsMobile
     private String mobile;
+    @NotNull
+    @Length(min=32)
     private String password;
 }

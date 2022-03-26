@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * @author ：atGaoJu
  * @date ：Created in 2022/3/24 3:56 PM
@@ -30,7 +32,7 @@ public class LoginController {
 
     @RequestMapping("doLogin")
     @ResponseBody
-    public RespBean doLogin(LoginVo loginVo){
+    public RespBean doLogin(@Valid LoginVo loginVo){
         log.info("{}",loginVo);
         return userService.doLogin(loginVo);
     }

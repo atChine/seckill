@@ -31,7 +31,8 @@ public enum RespBeanEnum {
     ERROR_CAPTCHA(500503, "验证码错误，请重新输入"),
     ACCESS_LIMIT_REACHED(500504, "访问过于频繁，请稍后重试"),
     //订单模块5003xx
-    ORDER_NOT_EXIST(500300, "订单不存在");
+    ORDER_NOT_EXIST(500300, "订单不存在"),
+    ACCESS_LIMIT_REAHCED(500301, "已到达访问权限");
 
     private final Integer code;
     private final String message;
