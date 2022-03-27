@@ -1,11 +1,15 @@
 package com.atgao.seckill.service.impl;
 
+import com.atgao.seckill.exception.GlobalException;
 import com.atgao.seckill.pojo.SeckillGoods;
 import com.atgao.seckill.pojo.SeckillOrder;
 import com.atgao.seckill.pojo.SysUser;
+import com.atgao.seckill.service.GoodsService;
 import com.atgao.seckill.service.SeckillGoodsService;
 import com.atgao.seckill.service.SeckillOrderService;
 import com.atgao.seckill.vo.GoodsVo;
+import com.atgao.seckill.vo.OrderDeatilVo;
+import com.atgao.seckill.vo.RespBeanEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atgao.seckill.pojo.Order;
@@ -28,6 +32,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     private SeckillGoodsService seckillGoodsService;
     private SeckillOrderService seckillOrderService;
     private OrderMapper orderMapper;
+    private GoodsService goodsService;
     /**
      * 秒杀具体实现
      * @param user
@@ -62,6 +67,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         SeckillOrder.setGoodsId(goods.getId());
         seckillOrderService.save(SeckillOrder);
         return order;
+    }
+
+    /**
+     * 查询细节
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderDeatilVo detail(Long orderId) {
+        if(orderId == null){
+            throw new  GlobalException(RespBeanEnum.ORDER_NOT_EXIST);
+        }
+        Order order = orderMapper.selectById(orderId);
+        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(order.getGoodsId());
+        OrderDeatilVo detail = new OrderDeatilVo();
+        detail.setOrder(order);
+        detail.setGoodsVo(goodsVo);
+        return detail;
     }
 }
 

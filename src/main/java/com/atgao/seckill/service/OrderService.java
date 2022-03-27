@@ -3,6 +3,7 @@ package com.atgao.seckill.service;
 import com.atgao.seckill.pojo.Order;
 import com.atgao.seckill.pojo.SysUser;
 import com.atgao.seckill.vo.GoodsVo;
+import com.atgao.seckill.vo.OrderDeatilVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface OrderService extends IService<Order> {
 
     Order seckill(SysUser user, GoodsVo goods);
+
+    OrderDeatilVo detail(Long orderId);
 }

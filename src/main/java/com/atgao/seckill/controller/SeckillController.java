@@ -7,11 +7,13 @@ import com.atgao.seckill.service.GoodsService;
 import com.atgao.seckill.service.OrderService;
 import com.atgao.seckill.service.SeckillOrderService;
 import com.atgao.seckill.vo.GoodsVo;
+import com.atgao.seckill.vo.RespBean;
 import com.atgao.seckill.vo.RespBeanEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -29,17 +31,17 @@ public class SeckillController {
     private OrderService orderService;
 
     @RequestMapping("/doSeckill")
-    public String doSeckill(Model model, SysUser user, Long goodsId){
+    public RespBean doSeckill(Model model, SysUser user, Long goodsId){
         //判断是否登录
         if (user == null){
-            return "login";
+            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
         model.addAttribute("user",user);
         //判断库存
         GoodsVo goods = goodsService.findGoodsVoByGoodsId(goodsId);
         if(goods.getStockCount() < 1){
             model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
-            return "secKillFail";
+            return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         //判断是否重复抢购
         SeckillOrder seckillOrder = seckillOrderService.getOne(new LambdaQueryWrapper<SeckillOrder>()
@@ -47,12 +49,12 @@ public class SeckillController {
                 .eq(SeckillOrder::getGoodsId, goodsId));
         if (seckillOrder != null){
             model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
-            return "secKillFail";
+            return RespBean.error(RespBeanEnum.REPEATE_ERROR);
         }
         Order order = orderService.seckill(user,goods);
         model.addAttribute("order",order);
         model.addAttribute("goods",goods);
-        return "orderDetail";
+        return RespBean.success(order);
     }
 
 
