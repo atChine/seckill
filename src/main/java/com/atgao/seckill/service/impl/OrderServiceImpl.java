@@ -11,12 +11,15 @@ import com.atgao.seckill.vo.GoodsVo;
 import com.atgao.seckill.vo.OrderDeatilVo;
 import com.atgao.seckill.vo.RespBeanEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.atgao.seckill.pojo.Order;
 import com.atgao.seckill.service.OrderService;
 import com.atgao.seckill.mapper.OrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -33,12 +36,14 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     private SeckillOrderService seckillOrderService;
     private OrderMapper orderMapper;
     private GoodsService goodsService;
+    private RedisTemplate redisTemplate;
     /**
      * 秒杀具体实现
      * @param user
      * @param goods
      * @return
      */
+    @Transactional
     @Override
     public Order seckill(SysUser user, GoodsVo goods) {
         //查出秒杀商品表
@@ -46,8 +51,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
                 .eq(SeckillGoods::getGoodsId, goods.getId()));
         //更新库存信息
         seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        seckillGoodsService.updateById(seckillGoods);
-        //生成订单
+        boolean seckillGoodsResult = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>().set("stock_count"
+                , seckillGoods.getStockCount()).eq("id", seckillGoods.getId()).eq("stock_count", 0));
+        if(!seckillGoodsResult){
+            return null;
+        }
+        //生成订单,
         //生成订单
         Order order = new Order();
         order.setUserId(user.getId());
@@ -61,11 +70,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         order.setCreateDate(new Date());
         orderMapper.insert(order);
         //生成秒杀订单
-        SeckillOrder SeckillOrder = new SeckillOrder();
-        SeckillOrder.setUserId(user.getId());
-        SeckillOrder.setOrderId(order.getId());
-        SeckillOrder.setGoodsId(goods.getId());
-        seckillOrderService.save(SeckillOrder);
+        SeckillOrder seckillOrder = new SeckillOrder();
+        seckillOrder.setUserId(user.getId());
+        seckillOrder.setOrderId(order.getId());
+        seckillOrder.setGoodsId(goods.getId());
+       // seckillOrderService.save(SeckillOrder);
+        redisTemplate.opsForValue().set("order:"+user.getId()+":"+goods.getId(),seckillOrder);
         return order;
     }
 
