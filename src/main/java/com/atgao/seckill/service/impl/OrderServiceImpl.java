@@ -18,6 +18,7 @@ import com.atgao.seckill.service.OrderService;
 import com.atgao.seckill.mapper.OrderMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,17 +47,20 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     @Transactional
     @Override
     public Order seckill(SysUser user, GoodsVo goods) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
         //查出秒杀商品表
         SeckillGoods seckillGoods = seckillGoodsService.getOne(new LambdaQueryWrapper<SeckillGoods>()
                 .eq(SeckillGoods::getGoodsId, goods.getId()));
         //更新库存信息
         seckillGoods.setStockCount(seckillGoods.getStockCount() - 1);
-        boolean seckillGoodsResult = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>().set("stock_count"
-                , seckillGoods.getStockCount()).eq("id", seckillGoods.getId()).eq("stock_count", 0));
-        if(!seckillGoodsResult){
+        boolean result = seckillGoodsService.update(new UpdateWrapper<SeckillGoods>()
+                .setSql("stock_count = stock_count - 1")
+                .eq("goode_id", goods.getId()).gt("stack_count", 0));
+        //判断库存是否充足
+        if(seckillGoods.getStockCount() < 1){
+            valueOperations.set("isStockEmpty",0);
             return null;
         }
-        //生成订单,
         //生成订单
         Order order = new Order();
         order.setUserId(user.getId());

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class RabbitMQConfig {
-
+   //初始化队列
     @Bean
     public Queue queue(){
         return new Queue("queue",true);

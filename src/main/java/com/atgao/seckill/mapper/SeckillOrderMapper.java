@@ -2,6 +2,7 @@ package com.atgao.seckill.mapper;
 
 import com.atgao.seckill.pojo.SeckillOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author apple
@@ -9,6 +10,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2022-03-26 15:27:37
 * @Entity com.atgao.seckill.pojo.SeckillOrder
 */
+@Mapper
 public interface SeckillOrderMapper extends BaseMapper<SeckillOrder> {
 
 }

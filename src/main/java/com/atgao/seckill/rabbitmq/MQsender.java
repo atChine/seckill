@@ -17,8 +17,16 @@ public class MQsender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void send(Object msg){
-        log.info("发送消息："+msg);
-        rabbitTemplate.convertAndSend("queue",msg);
+//    public void send(Object msg){
+//        log.info("发送消息："+msg);
+//        rabbitTemplate.convertAndSend("queue",msg);
+//    }
+    /**
+     * 发送秒杀信息
+     * @param message
+     */
+    public void sendSeckillMeassage(String message){
+        log.info("发送消息："+message);
+        rabbitTemplate.convertAndSend("seckillExchange","seckill.message",message);
     }
 }
