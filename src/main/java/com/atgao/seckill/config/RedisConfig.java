@@ -32,21 +32,12 @@ public class RedisConfig {
 	}
 
 
-	// @Bean
-	// public DefaultRedisScript<Boolean> script() {
-	// 	DefaultRedisScript<Boolean> redisScript = new DefaultRedisScript<>();
-	// 	//lock.lua脚本位置和application.yml同级目录
-	// 	redisScript.setLocation(new ClassPathResource("lock.lua"));
-	// 	redisScript.setResultType(Boolean.class);
-	// 	return redisScript;
-	// }
-
-
+	//创建Lua脚本
 	@Bean
-	public DefaultRedisScript<Long> script() {
+	public DefaultRedisScript<Long> redisScript() {
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
-		//放在和application.yml 同层目录下
-		redisScript.setLocation(new ClassPathResource("stock.lua"));
+		//脚本位置在classpath下，名称为stack.lua
+		redisScript.setLocation(new ClassPathResource("task.lua"));
 		redisScript.setResultType(Long.class);
 		return redisScript;
 	}
