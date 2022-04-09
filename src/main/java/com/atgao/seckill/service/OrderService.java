@@ -20,4 +20,13 @@ public interface OrderService extends IService<Order> {
     String createPath(SysUser user, Long goodsId);
 
     boolean checkPath(SysUser user, Long goodsId, String path);
+
+    /**
+     * 校验验证码
+     * @param user
+     * @param goodsId
+     * @param captcha
+     * @return
+     */
+    boolean checkCaptcha(SysUser user, Long goodsId, String captcha);
 }

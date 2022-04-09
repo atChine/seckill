@@ -1,5 +1,6 @@
 package com.atgao.seckill.controller;
 
+import com.atgao.seckill.config.AccessLimit;
 import com.atgao.seckill.exception.GlobalException;
 import com.atgao.seckill.pojo.Order;
 import com.atgao.seckill.pojo.SeckillOrder;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
@@ -127,17 +129,39 @@ public class SeckillController implements InitializingBean {
      * @param goodsId
      * @return orderId
      */
+    @AccessLimit(second = 5,maxCount = 5,needLogin = true)
     @RequestMapping(value = "/path",method = RequestMethod.GET)
     @ResponseBody
-    public RespBean getPath(SysUser user, Long goodsId){
+    public RespBean getPath(SysUser user, Long goodsId, String captcha, HttpServletRequest request){
         if(user == null){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
+        //计数器算法(使用注解)
+        //在队列排队中时候，限流，限制访问次数，5秒最多访问5次
+//        String uri = request.getRequestURI();
+//        ValueOperations valueOperations = redisTemplate.opsForValue();
+//        Integer count = (Integer) valueOperations.get(uri + ":" + user.getId());
+//        if(count == null){
+//            valueOperations.set(uri + ":" + user.getId(),1,5, TimeUnit.SECONDS);
+//        }else if(count < 5){
+//            valueOperations.increment(uri + ":" + user.getId());
+//        }else {
+//            return RespBean.error(RespBeanEnum.ACCESS_LIMIT_REAHCED);
+//        }
+//        boolean check = orderService.checkCaptcha(user,goodsId,captcha);
+//        if (!check){
+//            return RespBean.error(RespBeanEnum.ERROR_CAPTCHA);
+//        }
         String str = orderService.createPath(user,goodsId);
         return RespBean.success(str);
     }
 
-
+    /**
+     * 初始化验证码
+     * @param user
+     * @param goodsId
+     * @param response
+     */
     @RequestMapping(value = "/captcha",method = RequestMethod.GET)
     @ResponseBody
     public void captcha(SysUser user, Long goodsId, HttpServletResponse response){

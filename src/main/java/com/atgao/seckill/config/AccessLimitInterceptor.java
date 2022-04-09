@@ -21,11 +21,9 @@ import java.io.PrintWriter;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 乐字节：专注线上IT培训
- * 答疑老师微信：lezijie
- *
- * @author zhoubin
- * @since 1.0.0
+ * @author atgao
+ * @desc
+ * @date 2020/2/5 11:21 下午
  */
 @Component
 public class AccessLimitInterceptor implements HandlerInterceptor {
@@ -73,10 +71,6 @@ public class AccessLimitInterceptor implements HandlerInterceptor {
 
 	/**
 	 * 功能描述: 构建返回对象
-	 *
-	 * @param:
-	 * @return: 乐字节：专注线上IT培训
-	 * 答疑老师微信：lezijie
 	 * @since: 1.0.0
 	 * @Author:zhoubin
 	 */

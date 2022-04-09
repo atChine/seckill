@@ -32,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
 	}
 
-	@Override
+	@Override 
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(accessLimitInterceptor);
 	}
